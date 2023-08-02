@@ -148,7 +148,7 @@ public class ExpenserMain implements Expenser {
 	}
 
 	@Override
-	public Currency convertForeignCurrency(Currency C, double amount) {
+	public DifferentCurrency convertForeignCurrency(DifferentCurrency C, double amount) {
 		return null;
 	}
 
@@ -552,6 +552,11 @@ public class ExpenserMain implements Expenser {
 			sum += ex.getAmount();
 		}
 		return sum;
+	}
+
+	public DifferentCurrency convertForeignCurrency1(DifferentCurrency C, double amount) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * A class for creating user objects, which contains currency rates, income, expenses, balance, and monthly savings
  */
 public class User {
-	private ArrayList <Currency>currencyRates;
+	private ArrayList <DifferentCurrency>currencyRates;
 	private ArrayList <Wage>Income = new ArrayList<>();  // user income sources that user can record or view or search by type or month
 	private ArrayList <Expense>Spending = new ArrayList<>(); //user's expenses
 	String username;
