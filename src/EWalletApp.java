@@ -205,7 +205,7 @@ class appFrame extends JFrame {
 		homePanel hPanel = new homePanel();
 		addItemPanel addItmPanel = new addItemPanel();
 		importPanel impPanel = new importPanel();
-		estimatePanel estPanel = new estimatePanel();
+		estimatePanel estPanel = new estimatePanel(expenserMain);
 		incomeRepPanel incRepPanel = new incomeRepPanel();
 		expenseRepPanel expRepPanel = new expenseRepPanel();
 		detailedRepPanel detRepPanel = new detailedRepPanel();
@@ -908,90 +908,123 @@ class importPanel extends JPanel {
 /**
  * estimatePanel is a class that makes up ewallet's estimate page. It contains the ability for the user to estimate how long it
  * will take for a user to save up for an item based on stored income and expense information.
+ * 
+ * Needs work to work with multiple months of expenses. Expense file may need updating. Will adjust in next sprint.
+ * 
  */
 class estimatePanel extends JPanel {
-	GridBagConstraints gbConst;
-	JLabel estimateTitleLbl, nameLbl, priceLbl, estimateLbl, estimateAmtLbl;
-	JTextField nameField, priceField;
-	JButton estimateButton;
-	estimatePanel() {
-		this.setLayout(new GridBagLayout());
-		gbConst = new GridBagConstraints();
+    GridBagConstraints gbConst;
+    JLabel estimateTitleLbl, nameLbl, priceLbl, estimateLbl, estimateAmtLbl;
+    JTextField nameField, priceField;
+    JButton estimateButton;
+    private ExpenserMain expenserMain;
 
-		estimateTitleLbl = new JLabel("Estimate Tool");
-		gbConst.gridx = 0;
-		gbConst.gridy = 0;
-		gbConst.gridwidth = 2;
-		gbConst.insets = new Insets(10,20,30,30);
-		estimateTitleLbl.setFont(new Font(null, Font.PLAIN, 44));
-		this.add(estimateTitleLbl, gbConst);
+    estimatePanel(ExpenserMain expenserMain) {
+        this.setLayout(new GridBagLayout());
+        gbConst = new GridBagConstraints();
 
-		estimateLbl = new JLabel("Estimate:");
-		gbConst.gridx = 0;
-		gbConst.gridy = 1;
-		gbConst.gridwidth = 1;
-		gbConst.insets = new Insets(10,0,30,0);
-		estimateLbl.setFont(new Font(null, Font.PLAIN, 32));
-		this.add(estimateLbl, gbConst);
+        this.expenserMain = expenserMain;
 
-		estimateAmtLbl = new JLabel("0 days");
-		gbConst.gridx = 1;
-		gbConst.gridy = 1;
-		gbConst.insets = new Insets(10,0,30,0);
-		estimateAmtLbl.setFont(new Font(null, Font.PLAIN, 32));
-		this.add(estimateAmtLbl, gbConst);
+        estimateTitleLbl = new JLabel("Estimate Tool");
+        gbConst.gridx = 0;
+        gbConst.gridy = 0;
+        gbConst.gridwidth = 2;
+        gbConst.insets = new Insets(10, 20, 30, 30);
+        estimateTitleLbl.setFont(new Font(null, Font.PLAIN, 44));
+        this.add(estimateTitleLbl, gbConst);
 
-		nameLbl = new JLabel("Item Name");
-		gbConst.gridx = 0;
-		gbConst.gridy = 2;
-		gbConst.insets = new Insets(10,20,30,30);
-		nameLbl.setFont(new Font(null, Font.PLAIN, 32));
-		this.add(nameLbl, gbConst);
+        estimateLbl = new JLabel("Estimate:");
+        gbConst.gridx = 0;
+        gbConst.gridy = 1;
+        gbConst.gridwidth = 1;
+        gbConst.insets = new Insets(10, 0, 30, 0);
+        estimateLbl.setFont(new Font(null, Font.PLAIN, 32));
+        this.add(estimateLbl, gbConst);
 
-		nameField = new JTextField();
-		nameField.setPreferredSize(new Dimension(280, 50));
-		gbConst.gridx = 1;
-		gbConst.gridy = 2;
-		gbConst.insets = new Insets(10,10,30,30);
-		nameField.setFont(new Font(null, Font.PLAIN, 28));
-		this.add(nameField, gbConst);
+        estimateAmtLbl = new JLabel("0 months");
+        gbConst.gridx = 1;
+        gbConst.gridy = 1;
+        gbConst.insets = new Insets(10, 0, 30, 0);
+        estimateAmtLbl.setFont(new Font(null, Font.PLAIN, 32));
+        this.add(estimateAmtLbl, gbConst);
 
-		priceLbl = new JLabel("Item Price");
-		gbConst.gridx = 0;
-		gbConst.gridy = 3;
-		gbConst.insets = new Insets(10,20,30,30);
-		priceLbl.setFont(new Font(null, Font.PLAIN, 32));
-		this.add(priceLbl, gbConst);
+        nameLbl = new JLabel("Item Name");
+        gbConst.gridx = 0;
+        gbConst.gridy = 2;
+        gbConst.insets = new Insets(10, 20, 30, 30);
+        nameLbl.setFont(new Font(null, Font.PLAIN, 32));
+        this.add(nameLbl, gbConst);
 
-		priceField = new JTextField();
-		priceField.setPreferredSize(new Dimension(280, 50));
-		gbConst.gridx = 1;
-		gbConst.gridy = 3;
-		gbConst.insets = new Insets(10,10,30,30);
-		priceField.setFont(new Font(null, Font.PLAIN, 28));
-		this.add(priceField, gbConst);
+        nameField = new JTextField();
+        nameField.setPreferredSize(new Dimension(280, 50));
+        gbConst.gridx = 1;
+        gbConst.gridy = 2;
+        gbConst.insets = new Insets(10, 10, 30, 30);
+        nameField.setFont(new Font(null, Font.PLAIN, 28));
+        this.add(nameField, gbConst);
 
-		estimateButton = new JButton("Get Estimate");
-		estimateButton.addActionListener(new ActionListener() {
-			// Will retrieve estimate information.  Scheduled for Sprint 2.
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(e.getSource() == estimateButton) {
-					System.out.println("Get Estimate Button Clicked.");
-					nameField.setText("");
-					priceField.setText("");
-				}
-			}
-		});
-		estimateButton.setPreferredSize(new Dimension(220, 60));
-		gbConst.gridx = 0;
-		gbConst.gridy = 4;
-		gbConst.gridwidth = 2;
-		gbConst.insets = new Insets(30,30,30,30);
-		estimateButton.setFont(new Font(null, Font.PLAIN, 28));
-		this.add(estimateButton, gbConst);
+        priceLbl = new JLabel("Item Price");
+        gbConst.gridx = 0;
+        gbConst.gridy = 3;
+        gbConst.insets = new Insets(10, 20, 30, 30);
+        priceLbl.setFont(new Font(null, Font.PLAIN, 32));
+        this.add(priceLbl, gbConst);
 
-	}
+        priceField = new JTextField();
+        priceField.setPreferredSize(new Dimension(280, 50));
+        gbConst.gridx = 1;
+        gbConst.gridy = 3;
+        gbConst.insets = new Insets(10, 10, 30, 30);
+        priceField.setFont(new Font(null, Font.PLAIN, 28));
+        this.add(priceField, gbConst);
+
+        estimateButton = new JButton("Get Estimate");
+        estimateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == estimateButton) {
+                    calculateEstimate();
+                }
+            }
+        });
+        estimateButton.setPreferredSize(new Dimension(220, 60));
+        gbConst.gridx = 0;
+        gbConst.gridy = 4;
+        gbConst.gridwidth = 2;
+        gbConst.insets = new Insets(30, 30, 30, 30);
+        estimateButton.setFont(new Font(null, Font.PLAIN, 28));
+        this.add(estimateButton, gbConst);
+    }
+
+    private void calculateEstimate() {
+        String itemName = nameField.getText();
+        double itemPrice = Double.parseDouble(priceField.getText());
+
+        // Get expenses and wages from the ExpenserMain instance
+        ArrayList<Expense> expenses = expenserMain.userAtHand.getSpending();
+        ArrayList<Wage> wages = expenserMain.userAtHand.getIncome();
+
+        // Calculate the total monthly expenses
+        double totalExpenses = 0;
+        for (Expense expense : expenses) {
+            totalExpenses += (expense.getAmount() * expense.getFrequency());
+        }
+
+        // Calculate the total monthly income
+        double totalIncome = 0;
+        for (Wage wage : wages) {
+            totalIncome += wage.getAmount();
+        }
+
+        // Calculate the savings rate
+        double savingsRate = (totalIncome - totalExpenses) / totalIncome;
+
+        // Calculate the estimated time to save up for the item
+        int estimatedDays = (int) Math.ceil(itemPrice / (totalIncome * savingsRate));
+
+        // Display the result
+        estimateAmtLbl.setText(estimatedDays + " months");
+    }
 }
 
 /**
