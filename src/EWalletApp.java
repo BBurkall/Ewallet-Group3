@@ -1032,10 +1032,11 @@ class estimatePanel extends JPanel {
         }
 
         // Calculate the savings rate
-        double savingsRate = (totalIncome - totalExpenses) / totalIncome;
+        double savingsRate = (totalIncome - totalExpenses) / 12;
 
         // Calculate the estimated time to save up for the item
-        int estimatedDays = (int) Math.ceil(itemPrice / (totalIncome * savingsRate));
+        int estimatedDays = (int) (itemPrice / savingsRate);
+        
 
         // Display the result
         estimateAmtLbl.setText(estimatedDays + " months");
@@ -1661,4 +1662,3 @@ class createAccountPanel extends JPanel {
 	}
 	
 }
-
