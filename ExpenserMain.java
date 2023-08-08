@@ -104,14 +104,8 @@ public class ExpenserMain implements Expenser {
 				printWriter.append(",");
 				printWriter.append("" + userAtHand.getMonthlySavings());
 				printWriter.append("\n");
-				printWriter.append("Source,Amount,Frequency\n");
-
-				for (Wage wage : incomeRepPanel.filteredIncomeList) {
-					printWriter.append("" + wage.getSource() + ",");
-					printWriter.append("" + wage.getAmount() + ",");
-					printWriter.append("" + wage.getMonth() + "\n");
 				}
-			} else if (reportTitle.startsWith("Detailed Report")) { // If title starts with Detailed Report, the following will be written to file
+			 else if (reportTitle.startsWith("Detailed Report")) { // If title starts with Detailed Report, the following will be written to file
 				printWriter.append("Total Income");
 				printWriter.append(",");
 				printWriter.append("" + userAtHand.getBalance());
@@ -370,7 +364,7 @@ public class ExpenserMain implements Expenser {
             User.stmt = User.conn.createStatement();
     		}      
     	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
-		return User.stmt.executeQuery("SELECT * FROM \"APP\".\"PERSON\" WHERE \"month\" = " + month);
+		return User.stmt.executeQuery("SELECT * FROM \"APP\".\"INCOME\" WHERE \"month\" = " + month);
 	}
 	
 	/**
@@ -382,7 +376,7 @@ public class ExpenserMain implements Expenser {
 	 */
 	static ResultSet filterIncomesSource(ResultSet resultSet, String source) throws SQLException {
             User.stmt = User.conn.createStatement();
-		return User.stmt.executeQuery("SELECT * FROM \"APP\".\"PERSON\" WHERE \"Source\" = " + source);
+		return User.stmt.executeQuery("SELECT * FROM \"APP\".\"INCOME\" WHERE \"Source\" = " + source);
 	}
 
 	/**
@@ -406,6 +400,7 @@ public class ExpenserMain implements Expenser {
     	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
 		return incomeCount;
 	}
+	
 	public void updateIncomeTable() throws SQLException {
 
 		// Resetting row count - setting it to the income array size
@@ -441,18 +436,11 @@ public class ExpenserMain implements Expenser {
 		detailedRepPanel.model.setNumRows(0);
 
 		// re-adds rows based on number of wage objects
-		for(int j = 0; j < userAtHand.getIncome().size() + userAtHand.getSpending().size(); j++ ) {
+		for(int j = 0; j < userAtHand.size() + userAtHand.getSpending().size(); j++ ) {
 			detailedRepPanel.model.addRow(new Object[]{});
 		}
 
 		int i = 0;
-		for(Wage wage : userAtHand.getIncome()) { // repopulates table with wage data
-			detailedRepPanel.detailedTable.setValueAt("Income", i, 0);
-			detailedRepPanel.detailedTable.setValueAt(wage.getSource(), i, 1);
-			detailedRepPanel.detailedTable.setValueAt(String.format("$%.2f",wage.getAmount()), i, 2);
-			detailedRepPanel.detailedTable.setValueAt(wage.getMonth(), i, 3);
-			++i;
-		}
 
 		for(Expense expense : userAtHand.getSpending()) { // repopulates table with expense data
 			detailedRepPanel.detailedTable.setValueAt("Expense", i, 0);

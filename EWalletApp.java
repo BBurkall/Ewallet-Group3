@@ -1020,7 +1020,12 @@ class estimatePanel extends JPanel {
 
         // Get expenses and wages from the ExpenserMain instance
         ArrayList<Expense> expenses = expenserMain.userAtHand.getSpending();
-        ResultSet wages = expenserMain.userAtHand.getIncome();
+        try {
+			ResultSet wages = expenserMain.userAtHand.getIncome();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         // Calculate the total monthly expenses
         double totalExpenses = 0;
@@ -1029,10 +1034,7 @@ class estimatePanel extends JPanel {
         }
 
         // Calculate the total monthly income
-        double totalIncome = 0;
-        for (Wage wage : wages) {
-            totalIncome += wage.getAmount();
-        }
+        double totalIncome = expenserMain.userAtHand.totalIncome();
 
         // Calculate the savings rate
         double savingsRate = (totalIncome - totalExpenses) / totalIncome;
@@ -1147,18 +1149,16 @@ class incomeRepPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == applyFilter) {
-					filteredIncomeList =
-							ExpenserMain.filterIncomesMonth(ExpenserMain.filterIncomesSource(expenserMain.userAtHand.getIncome(),(String)typeSelector.getItemAt(typeSelector.getSelectedIndex())), (String)monthSelector.getItemAt(monthSelector.getSelectedIndex()));
-					incomeRepPanel.model.setNumRows(filteredIncomeList.size());
+					try {
+						filteredIncomeList =
+								ExpenserMain.filterIncomesMonth(ExpenserMain.filterIncomesSource(expenserMain.userAtHand.getIncome(),(String)typeSelector.getItemAt(typeSelector.getSelectedIndex())), (String)monthSelector.getItemAt(monthSelector.getSelectedIndex()));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					incomeRepPanel.model.setNumRows(10);
 					int i = 0;
 					double incomeSum = 0.00f;
-					for(Wage wage : filteredIncomeList) {
-						incomeRepPanel.incomeTable.setValueAt(wage.getSource(), i, 0);
-						incomeRepPanel.incomeTable.setValueAt(String.format("$%.2f",wage.getAmount()), i, 1);
-						incomeRepPanel.incomeTable.setValueAt(wage.getMonth(), i, 2);
-						++i;
-						incomeSum += wage.getAmount();
-					}
 					totalFilteredIncomeAmtLbl.setText(String.format("$%.2f",incomeSum));
 				}
 			}

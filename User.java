@@ -1,3 +1,4 @@
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -35,17 +36,14 @@ public class User {
 		this.pwd = password;
 	}
 	
-	static void createConnection()
+	static void createConnection() throws SQLException
     {
-        try
-        {
-        	Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+        	try {
+				Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
             conn = DriverManager.getConnection(dbURLembedded); 
-        }
-        catch (Exception except)
-        {
-            except.printStackTrace();
-        }
         System.out.println("Connection Created.");
     }
 
@@ -122,7 +120,7 @@ public class User {
             stmt = conn.createStatement();
     		}      
     	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
-		return stmt.executeQuery("SELECT * FROM \"APP\".\"PERSON\"");
+		return stmt.executeQuery("SELECT \"INCOME\" FROM \"APP\".\"PERSON\"");
 	}
 
 	/**
@@ -179,6 +177,50 @@ public class User {
 	 */
 	protected void setMonthlySavings(double monthlySavings) {
 		this.monthlysavings = monthlySavings;
+	}
+	
+	protected int size() {
+		int count = 0;
+		try {  
+            stmt = conn.createStatement();
+    		   ResultSet results = stmt.executeQuery("SELECT * from APP.INCOME");
+       while(results.next()) {
+    	   count++;
+        }
+    	}      
+    	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
+		
+		return count;
+	}
+	
+	protected int[] incomeArray() {
+		int count = 0;
+		int incomeArray[] = {0};
+		try {  
+            stmt = conn.createStatement();
+    		   ResultSet results = stmt.executeQuery("SELECT * from APP.INCOME");
+       while(results.next()) {
+    	   incomeArray[count] = results.getInt("Amount");
+    	   count++;
+        }
+    	}      
+    	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
+		
+		return incomeArray;
+	}
+	
+	protected double totalIncome() {
+		double totalIncome = 0;
+		try {  
+            stmt = conn.createStatement();
+    		   ResultSet results = stmt.executeQuery("SELECT * from APP.INCOME");
+       while(results.next()) {
+    	   totalIncome = totalIncome + results.getInt("Amount");
+        }
+    	}      
+    	catch (SQLException sqlExcept){ sqlExcept.printStackTrace();}
+		
+		return totalIncome;
 	}
 }
 
