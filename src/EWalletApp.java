@@ -15,6 +15,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+
+
+
 public class EWalletApp {
 	//this is the app class, has the GUI and create one object of your expense calculator class. The expense calculator class is the implementation of the Expenser interface
 	private ArrayList<User> AllData = new ArrayList<>();
@@ -501,7 +509,7 @@ class homePanel extends JPanel {
 class addItemPanel extends JTabbedPane {
 
 	ExpenserMain expenserMain;
-	int yearlyFrequency;
+	int Frequency;
 	double amount;
 	String month, source;
 	GridBagConstraints gbConst;
@@ -731,14 +739,14 @@ class addItemPanel extends JTabbedPane {
 					if(nameExpField.getText().length() > 0 && amountExpField.getText().length() > 0 & frequencyExpField.getText().length() > 0) {
 						try {
 							amount = Double.parseDouble(amountExpField.getText());
-							yearlyFrequency = Integer.parseInt(frequencyExpField.getText());
+							Frequency = Integer.parseInt(frequencyExpField.getText());
 
 						} catch (NumberFormatException n) {
 							System.out.println(n.getMessage());
 							amount = 0.00f;
 						}
 						source = nameExpField.getText();
-						Expense Ex = new Expense(source, amount, yearlyFrequency); // new expense object
+						Expense Ex = new Expense(source, amount, Frequency); // new expense object
 						expenserMain.addExpense(Ex); // adding it to the user's spending arraylist
 						expenserMain.updateExpenseValues();
 
@@ -766,10 +774,54 @@ class addItemPanel extends JTabbedPane {
 						nameExpField.setText("");
 						frequencyExpField.setText("");
 						amountExpField.setText("");
+					
+						
+					//connect to database
+						String jdbcUrl =  "jdbc:derby:ewalletdb";
+						try (Connection connection = DriverManager.getConnection(jdbcUrl);
+							     Statement statement = connection.createStatement()) {
+						
+						try {
+						    if (connection != null) {
+						        connection.close();
+						        System.out.println("Connection closed");
+						    }
+						} catch (SQLException e1) {
+						    e1.printStackTrace();
+						}
+				        	
+				        	
+				            // Create expenses table
+				            String createTableQuery = "CREATE TABLE IF NOT EXISTS expenses (" +
+				                                      "id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+				                                      "source VARCHAR(255)," +
+				                                      "amount DECIMAL(10, 2)," +
+				                                      "Frequency INT)";
+				          
+				            // Insert the Expense data into the expenses table
+				            String insertQuery = "INSERT INTO expenses1 (source, amount, Frequency) VALUES (?, ?, ?)";
+				            try (Connection connection1 = DriverManager.getConnection(jdbcUrl);
+				            	    PreparedStatement preparedStatement = connection1.prepareStatement(insertQuery)) {
+				            	    preparedStatement.setString(1, Ex.getSource());
+				            	    preparedStatement.setDouble(2, Ex.getAmount());
+				            	    preparedStatement.setInt(3, Ex.getFrequency());
+				            	    preparedStatement.executeUpdate();
+				           
+				            
+				            // Retrieve and display data from the expenses table
+				  
+				        } catch (SQLException e1) {
+				            e1.printStackTrace();
+				        
+				        }
+				        } catch (SQLException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}		
+				        }
 					}
 				}
-			}
-		});
+			});
 
 		this.add("Add Expense", expensePane);
 		this.setFont(new Font(null, Font.PLAIN, 24));
