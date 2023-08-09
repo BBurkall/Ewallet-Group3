@@ -1007,7 +1007,22 @@ class estimatePanel extends JPanel {
         // Calculate the total monthly expenses
         double totalExpenses = 0;
         for (Expense expense : expenses) {
-            totalExpenses += (expense.getAmount() * expense.getFrequency());
+            double amount = expense.getAmount();
+            int yearlyFrequency = expense.getFrequency();
+
+            // Convert the expense amount based on its frequency
+            switch (yearlyFrequency) {
+                case 1: // One time or once a year
+                    totalExpenses += amount;
+                    break;
+                case 12: // Monthly
+                    totalExpenses += amount * 12;
+                    break;
+                case 24: // Biweekly
+                    totalExpenses += amount * 24;
+                    break;
+                default:
+            }
         }
 
         // Calculate the total monthly income
@@ -1017,10 +1032,11 @@ class estimatePanel extends JPanel {
         }
 
         // Calculate the savings rate
-        double savingsRate = (totalIncome - totalExpenses) / totalIncome;
+        double savingsRate = (totalIncome - totalExpenses) / 12;
 
         // Calculate the estimated time to save up for the item
-        int estimatedDays = (int) Math.ceil(itemPrice / (totalIncome * savingsRate));
+        int estimatedDays = (int) (itemPrice / savingsRate);
+        
 
         // Display the result
         estimateAmtLbl.setText(estimatedDays + " months");
@@ -1646,4 +1662,3 @@ class createAccountPanel extends JPanel {
 	}
 	
 }
-
